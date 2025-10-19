@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Vehicle Dashboard</title>
+  <style>
+   :root {
+      --primary: #3498db;
+      --primary-dark: #2980b9;
+      --secondary: #2ecc71;
+      --secondary-dark: #27ae60;
+      --danger: #e74c3c;
+      --danger-dark: #c0392b;
+      --background: #121212;
+      --card-bg: #1e1e1e;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --text-light: #ecf0f1;
+      --text-muted: #bdc3c7;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    h1 {
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      text-align: center;
+      color: var(--primary);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dashboard {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: var(--card-shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    
+    .status-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    
+    .status-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+    
+    .status-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .status-card h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .status-value {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .status-unit {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+    
+    .speed-container {
+      position: relative;
+    }
+    
+    .speed-gauge {
+      width: 100%;
+      height: 120px;
+      position: relative;
+      margin: 20px 0;
+    }
+    
+    .gauge-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 0 0 180px 180px;
+      background: rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+    
+    .gauge-fill {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 0 0 180px 180px;
+      background: linear-gradient(90deg, var(--secondary), var(--primary));
+      transform-origin: center top;
+      transform: rotate(0deg);
+      transition: transform 0.5s ease;
+    }
+    
+    .gauge-needle {
+      position: absolute;
+      width: 4px;
+      height: 60px;
+      background: var(--text-light);
+      bottom: 0;
+      left: 50%;
+      transform-origin: bottom center;
+      transform: translateX(-50%) rotate(0deg);
+      transition: transform 0.5s ease;
+      border-radius: 2px 2px 0 0;
+      z-index: 2;
+    }
+    
+    .gauge-marks {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .gauge-mark {
+      position: absolute;
+      width: 2px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      bottom: 0;
+      left: 50%;
+      transform-origin: bottom center;
+    }
+    
+    .gauge-label {
+      position: absolute;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      bottom: 15px;
+      transform: translateX(-50%);
+    }
+    
+    .fuel-container {
+      position: relative;
+    }
+    
+    .fuel-gauge {
+      width: 100%;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+    
+    .fuel-level {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--danger), var(--secondary));
+      border-radius: 10px;
+      transition: width 0.5s ease;
+    }
+    
+    .fuel-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-top: 10px;
+    }
+    
+.vehicle-status {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+#vehicleStatus {
+    font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--danger);
+  color: white;
+  font-size: 0.9rem;
+}
+
+#vehicleStatus.on {
+  background: var(--secondary);
+}
+
+.power-btn {
+  background: #9b59b6;
+  color: white;
+  padding: 8px 15px; 
+  font-size: 0.9rem; 
+   white-space: nowrap; 
+  width: 40%; 
+  flex: none; 
+}
+
+.power-btn:hover {
+  background: #8e44ad;
+}
+
+
+.controls.disabled button:not(#togglePowerBtn) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+    button {
+      flex: 1;
+      padding: 15px 10px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    #accelerateBtn {
+      background: var(--secondary);
+      color: white;
+    }
+    
+    #accelerateBtn:hover {
+      background: var(--secondary-dark);
+    }
+    
+    #brakeBtn {
+      background: var(--danger);
+      color: white;
+    }
+    
+    #brakeBtn:hover {
+      background: var(--danger-dark);
+    }
+    
+    #refuelBtn {
+      background: var(--primary);
+      color: white;
+    }
+    
+    #refuelBtn:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-icon {
+  width: 30px;
+  height: 30px;
+  filter: brightness(0) invert(1); 
+}
+
+
+button i {
+  font-size: 1.2rem;
+}
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
+      transform: translateX(150%);
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      border-left: 4px solid var(--secondary);
+    }
+    
+    .notification.warning {
+      border-left: 4px solid var(--danger);
+    }
+    
+    @media (max-width: 600px) {
+      .dashboard {
+        padding: 20px;
+      }
+      
+      .status-container {
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .controls {
+        flex-direction: column;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    
+  </style>
+</head>
+<body>
+  <h1>Pra pra pra brom brom camello</h1>
+  
+  <div class="dashboard">
+    <div class="status-container">
+      <div class="status-card speed-container">
+        <h3>Speed</h3>
+        <div class="speed-gauge">
+          <div class="gauge-background"></div>
+          <div class="gauge-fill" id="gaugeFill"></div>
+          <div class="gauge-needle" id="gaugeNeedle"></div>
+          <div class="gauge-marks" id="gaugeMarks"></div>
+        </div>
+        <div class="status-value" id="speed">0</div>
+        <div class="status-unit">km/h</div>
+      </div>
+      
+      <div class="status-card fuel-container">
+        <h3>Fuel Level</h3>
+        <div class="fuel-gauge">
+          <div class="fuel-level" id="fuelLevel"></div>
+        </div>
+        <div class="fuel-labels">
+          <span>0%</span>
+          <span>50%</span>
+          <span>100%</span>
+        </div>
+        <div class="status-value" id="fuel">100</div>
+        <div class="status-unit">%</div>
+      </div>
+    </div>
+    
+  <div class="vehicle-status">
+    <div class="status-indicator">
+      <span class="status-label">Vehicle Status:</span>
+      <span id="vehicleStatus">OFF</span>
+    </div>
+    <button id="togglePowerBtn" class="power-btn">
+      <span></span> Power
+    </button>
+  </div>
+  
+
+    <div class="controls">
+  <button id="accelerateBtn">
+    <img src="arrow.png" alt="Accelerate" class="btn-icon">
+    Accelerate
+  </button>
+  <button id="brakeBtn">
+    <img src="brake.png" alt="Brake" class="btn-icon">
+    Brake
+  </button>
+  <button id="refuelBtn">
+    <img src="refuel.png" alt="Refuel" class="btn-icon">
+    Refuel
+  </button>
+</div>
+  </div>
+  
+  <div class="notification" id="notification"></div>
+
+  
+
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+    let speed = 0;
+    let fuel = 100;
+    let isOn = false; 
+    document.getElementById('accelerateBtn').addEventListener('click', function() {
+        if (isOn && fuel > 0) { 
+            speed += 10;
+            fuel -= 5;
+            updateDisplay();
+        }
+    });
+    
+    document.getElementById('brakeBtn').addEventListener('click', function() {
+        if (isOn) { 
+            speed = Math.max(0, speed - 10);
+            updateDisplay();
+        }
+    });
+    
+    document.getElementById('refuelBtn').addEventListener('click', function() {
+        fuel = 100;
+        updateDisplay();
+    });
+
+    
+    document.getElementById('togglePowerBtn').addEventListener('click', function() {
+        isOn = !isOn;
+        if (!isOn) {
+            speed = 0; 
+        }
+        updateDisplay();
+    });
+    
+   function updateDisplay() {
+    document.getElementById('speed').textContent = speed;
+    document.getElementById('fuel').textContent = fuel;
+    const statusElement = document.getElementById('vehicleStatus');
+    statusElement.textContent = isOn ? "ON" : "OFF";
+    statusElement.className = isOn ? "on" : ""; 
+}
+});
+</script>
+</body>
+</html>
